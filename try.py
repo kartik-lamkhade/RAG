@@ -36,7 +36,7 @@ if st.button("start coversation"):
                 documents=documents,
                 embedding=emb_model
             )
-            st.session_state.vectore_store = vectore_store
+            st.session_state.vectore_stor = vectore_store
             st.session_state.processed = True
         except Exception as e:
             st.write(f"Error {e}")
