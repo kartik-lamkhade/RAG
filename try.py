@@ -37,8 +37,7 @@ if st.button("start coversation"):
         
             Query = st.text_input("Enter query here")
             if st.button("predict") and Query:
-                if st.button("predict"):
-                    output = vectore_store.similarity_search(Query,k=5)
+                output = vectore_store.similarity_search(Query,k=5)
                     def add(doc):
                         a = ""
                         for i in doc:
