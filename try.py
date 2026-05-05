@@ -15,12 +15,12 @@ parser = StrOutputParser()
 model = ChatHuggingFace(llm=HuggingFaceEndpoint(model="Qwen/Qwen2.5-Coder-7B-Instruct"))
 emb_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 file = st.file_uploader("Uplode file here",type='pdf')
-file_bytes = file.getvalue()
 if 'processed' not in st.session_state:
     st.session_state.processed = False
 if st.button("start coversation"):
     if file is not None:
         try:
+            file_bytes = file.getvalue()
             with tempfile.NamedTemporaryFile(delete=False,suffix='.pdf') as tmp:
                 tmp.write(file_bytes)
                 tmp.flush()
@@ -36,6 +36,7 @@ if st.button("start coversation"):
                 documents=documents,
                 embedding=emb_model
             )
+            st.session_state.vectore_store = vectore_store
             st.session_state.processed = True
         except Exception as e:
             st.write(f"Error {e}")
@@ -46,7 +47,7 @@ if st.session_state.processed:
         if Query:
             try:
                 with st.spinner("Generating answer"):
-                    output = vectore_store.similarity_search(Query,k=5)
+                    output = st.session_state.vectore_store.similarity_search(Query,k=5)
                     def add(doc):
                         a = ""
                         for i in doc:
