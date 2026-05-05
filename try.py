@@ -12,13 +12,18 @@ import os
 
 st.title("Document Q&A")
 
-# Cache models
+# Cache models with API token
 @st.cache_resource
 def load_models():
     parser = StrOutputParser()
+    
+    # Get token from Streamlit secrets
+    hf_token = st.secrets.get("HUGGINGFACE_API_TOKEN", None)
+    
     model = ChatHuggingFace(
         llm=HuggingFaceEndpoint(
-            repo_id="Qwen/Qwen2.5-Coder-7B-Instruct"
+            repo_id="Qwen/Qwen2.5-Coder-7B-Instruct",
+            huggingfacehub_api_token=hf_token  # Add token here
         )
     )
     emb_model = HuggingFaceEmbeddings(
@@ -36,42 +41,24 @@ if st.button("start conversation"):
     if file is not None:
         try:
             with st.spinner("Processing PDF..."):
-                # METHOD 1: Write file properly
-                # Get the file bytes first
+                # Get file bytes
                 file_bytes = file.getvalue()
                 st.info(f"File uploaded: {file.name}, Size: {len(file_bytes)} bytes")
                 
-                # Create temp file and write content
+                # Create temp file
                 with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf', mode='wb') as tmp:
-                    tmp.write(file_bytes)  # Write the bytes!
-                    tmp.flush()  # Force write to disk
+                    tmp.write(file_bytes)
+                    tmp.flush()
                     temp_path = tmp.name
                 
-                # Verify file was written
-                if os.path.exists(temp_path):
-                    file_size = os.path.getsize(temp_path)
-                    st.info(f"Temp file created: {temp_path}, Size: {file_size} bytes")
-                    
-                    if file_size == 0:
-                        st.error("❌ Error: Temp file is empty!")
-                        os.unlink(temp_path)
-                        st.stop()
-                else:
-                    st.error("❌ Error: Temp file was not created!")
-                    st.stop()
-                
                 # Load PDF
-                st.info("Loading PDF...")
                 loader = PDFPlumberLoader(temp_path)
                 document = loader.load()
-                
-                # Clean up temp file
                 os.unlink(temp_path)
                 
                 st.success(f"✅ Loaded {len(document)} page(s)")
                 
                 # Split documents
-                st.info("Splitting document into chunks...")
                 splitter = RecursiveCharacterTextSplitter(
                     chunk_size=1000,
                     chunk_overlap=200
@@ -81,31 +68,26 @@ if st.button("start conversation"):
                     docs.extend(splitter.split_text(d.page_content))
                 
                 documents = [Document(page_content=doc) for doc in docs]
-                st.info(f"Created {len(documents)} chunks")
                 
                 # Create vector store
-                st.info("Creating vector store...")
                 vector_store = FAISS.from_documents(
                     documents=documents,
                     embedding=emb_model
                 )
                 
-                # Store in session state
                 st.session_state.vector_store = vector_store
                 st.session_state.processed = True
                 st.success(f"✅ Vector store created with {len(documents)} chunks!")
                 
         except Exception as e:
-            st.error(f"❌ Error Type: {type(e).__name__}")
-            st.error(f"❌ Error Message: {str(e)}")
-            
+            st.error(f"❌ Error: {str(e)}")
             import traceback
-            with st.expander("🔍 Show full error details"):
+            with st.expander("Show details"):
                 st.code(traceback.format_exc())
     else:
         st.error("❌ Please upload a PDF file first!")
 
-# Query interface (shown only after processing)
+# Query interface
 if 'processed' in st.session_state and st.session_state.processed:
     st.markdown("---")
     st.subheader("💬 Ask Questions")
@@ -114,11 +96,9 @@ if 'processed' in st.session_state and st.session_state.processed:
     
     if st.button("Get Answer") and query:
         try:
-            with st.spinner("Searching and generating answer..."):
+            with st.spinner("Generating answer..."):
                 # Similarity search
                 output = st.session_state.vector_store.similarity_search(query, k=5)
-                
-                # Combine context
                 context = "\n\n".join([doc.page_content for doc in output])
                 
                 # Create prompt
@@ -142,10 +122,7 @@ Answer:""",
                 st.write(answer)
                 
                 with st.expander("📄 View Retrieved Context"):
-                    for i, doc in enumerate(output, 1):
-                        st.markdown(f"**Chunk {i}:**")
-                        st.text(doc.page_content)
-                        st.markdown("---")
+                    st.text(context)
                         
         except Exception as e:
             st.error(f"❌ Error: {str(e)}")
