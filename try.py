@@ -15,6 +15,7 @@ parser = StrOutputParser()
 model = ChatHuggingFace(llm=HuggingFaceEndpoint(model="Qwen/Qwen2.5-Coder-7B-Instruct"))
 emb_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 file = st.file_uploader("Uplode file here",type='pdf')
+file_bytes = file.getvalue()
 if st.button("start coversation"):
     if file is not None:
         try:
