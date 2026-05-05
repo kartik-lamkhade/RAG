@@ -10,7 +10,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import tempfile
 token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-token1 = st.secrets["GROQ_API_KEY "]
+token1 = st.secrets["GROQ_API_KEY"]
 
 st.title("Document answer")
 parser = StrOutputParser()
