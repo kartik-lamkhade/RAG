@@ -13,7 +13,7 @@ import tempfile
 token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 token1 = st.secrets["GROQ_API_KEY"]
 
-st.title("Document answer")
+st.title("AI PDF Chatbot (RAG Powered)")
 parser = StrOutputParser()
 model = ChatGroq(
     groq_api_key=token1,
