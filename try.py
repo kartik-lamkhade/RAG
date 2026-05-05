@@ -36,7 +36,7 @@ if st.button("start coversation"):
                 documents=documents,
                 embedding=emb_model
             )
-            st.session_state.vectore_stor = vectore_store
+            st.session_state.vectore_store = vectore_store
             st.session_state.processed = True
         except Exception as e:
             st.write(f"Error {e}")
@@ -47,7 +47,7 @@ if st.session_state.processed:
         if Query:
             try:
                 with st.spinner("Generating answer"):
-                    output = st.session_state.vectore_store.similarity_search(Query,k=5)
+                    output = st.session_state.vectore_stoe.similarity_search(Query,k=5)
                     def add(doc):
                         a = ""
                         for i in doc:
