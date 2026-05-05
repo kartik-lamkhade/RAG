@@ -20,6 +20,8 @@ if st.button("start coversation"):
     if file is not None:
         try:
             with tempfile.NamedTemporaryFile(delete=False,suffix='.pdf') as tmp:
+                tmp.write(file_bytes)
+                tmp.flush()
                 temp_path = tmp.name
             loader = PDFPlumberLoader(temp_path)
             document = loader.load()
