@@ -13,7 +13,7 @@ token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 
 st.title("Document answer")
 parser = StrOutputParser()
-model = ChatHuggingFace(llm=HuggingFaceEndpoint(model="Qwen/Qwen2.5-Coder-7B-Instruct",huggingfacehub_api_token=token))
+model = ChatHuggingFace(llm=HuggingFaceEndpoint(model="mistralai/Mistral-7B-Instruct-v0.2",huggingfacehub_api_token=token))
 emb_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 file = st.file_uploader("Uplode file here",type='pdf')
 if "vectore_store" not in st.session_state:
