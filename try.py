@@ -16,8 +16,6 @@ model = ChatHuggingFace(llm=HuggingFaceEndpoint(model="Qwen/Qwen2.5-Coder-7B-Ins
 emb_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 file = st.file_uploader("Uplode file here",type='pdf')
 file_bytes = file.getvalue()
-# if 'vector_store' not in st.session_state:
-#     st.session_state.vector_store = None
 if 'processed' not in st.session_state:
     st.session_state.processed = False
 if st.button("start coversation"):
@@ -38,7 +36,6 @@ if st.button("start coversation"):
                 documents=documents,
                 embedding=emb_model
             )
-            st.session_state.vector_store = vector_store
             st.session_state.processed = True
         except Exception as e:
             st.write(f"Error {e}")
