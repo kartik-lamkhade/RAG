@@ -9,7 +9,7 @@ from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import tempfile
-token = streamlit.secrets["HUGGINGFACEHUB_API_TOKEN"]
+token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 
 st.title("Document answer")
 parser = StrOutputParser()
