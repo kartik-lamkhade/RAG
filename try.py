@@ -20,8 +20,6 @@ if st.button("start coversation"):
     if file is not None:
         try:
             with tempfile.NamedTemporaryFile(delete=False,suffix='.pdf') as tmp:
-                tmp.write(file_bytes)
-                tmp.flush()
                 temp_path = tmp.name
             loader = PDFPlumberLoader(temp_path)
             document = loader.load()
@@ -36,26 +34,33 @@ if st.button("start coversation"):
             )
         
             Query = st.text_input("Enter query here")
-            if Query:
-                if st.button("predict"):
-                    output = vectore_store.similarity_search(Query,k=5)
-                    def add(doc):
-                        a = ""
-                        for i in doc:
-                            a += i.page_content + "\n"
-                        return a
-                    a = add(output)
-                    template = PromptTemplate(template="give me answer for the question based on the following context: {context} and question: {question}",
-                                            input_variables=["context","question"])
-                    chain = template | model | parser
-                    out = chain.invoke({"context":a,"question":Query})
-                    st.write(out)
-            else:
-                st.write("Enter query first")
+            try:
+                if Query:
+                    if st.button("predict"):
+                        output = vectore_store.similarity_search(Query,k=5)
+                        def add(doc):
+                            a = ""
+                            for i in doc:
+                                a += i.page_content + "\n"
+                            return a
+                        a = add(output)
+                        template = PromptTemplate(template="give me answer for the question based on the following context: {context} and question: {question}",
+                                                input_variables=["context","question"])
+                        chain = template | model | parser
+                        out = chain.invoke({"context":a,"question":Query})
+                        st.write(out)
+                else:
+                    st.write("Enter query first")
+            except Exception as e:
+                st.write(f"Error {e}")
         except Exception as e:
             st.write(f"Error {e}")
 else:
     st.write("NUN")
+
+
+
+
 
 
 
