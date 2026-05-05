@@ -8,6 +8,7 @@ from langchain_community.docstore.in_memory import InMemoryDocstore
 from langchain_core.documents import Document
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
+from langchain_groq import ChatGroq
 import tempfile
 token = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
 token1 = st.secrets["GROQ_API_KEY"]
