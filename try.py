@@ -16,6 +16,10 @@ model = ChatHuggingFace(llm=HuggingFaceEndpoint(model="Qwen/Qwen2.5-Coder-7B-Ins
 emb_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 file = st.file_uploader("Uplode file here",type='pdf')
 file_bytes = file.getvalue()
+if 'vector_store' not in st.session_state:
+    st.session_state.vector_store = None
+if 'processed' not in st.session_state:
+    st.session_state.processed = False
 if st.button("start coversation"):
     if file is not None:
         try:
@@ -34,29 +38,33 @@ if st.button("start coversation"):
                 documents=documents,
                 embedding=emb_model
             )
-        
-            Query = st.text_input("Enter query here")
-            if st.button("predict") and Query:
-                try:
-                    with st.spinner("Generating answer"):
-                        output = vectore_store.similarity_search(Query,k=5)
-                        def add(doc):
-                            a = ""
-                            for i in doc:
-                                a += i.page_content + "\n"
-                            return a
-                        a = add(output)
-                        template = PromptTemplate(template="give me answer for the question based on the following context: {context} and question: {question}",
-                                                input_variables=["context","question"])
-                        chain = template | model | parser
-                        out = chain.invoke({"context":a,"question":Query})
-                        st.write(out)
-                except Exception as e:
-                    st.write(f"Error {e}")
-            else:
-                st.write("noooooooooooooooooo")
+            st.session_state.vector_store = vector_store
+            st.session_state.processed = True
         except Exception as e:
             st.write(f"Error {e}")
+
+if st.session_state.processed:     
+    Query = st.text_input("Enter query here")
+    if st.button("predict"):
+        if Query:
+            try:
+                with st.spinner("Generating answer"):
+                    output = vectore_store.similarity_search(Query,k=5)
+                    def add(doc):
+                        a = ""
+                        for i in doc:
+                            a += i.page_content + "\n"
+                        return a
+                    a = add(output)
+                    template = PromptTemplate(template="give me answer for the question based on the following context: {context} and question: {question}",
+                                            input_variables=["context","question"])
+                    chain = template | model | parser
+                    out = chain.invoke({"context":a,"question":Query})
+                    st.write(out)
+            except Exception as e:
+                st.write(f"Error {e}")
+        else:
+            st.write("noooooooooooooooooo")
 else:
     st.write("NUN")
 
