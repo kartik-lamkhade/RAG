@@ -9,3 +9,4 @@ faiss-cpu
 huggingface-hub
 pdfplumber
 pypdf
+langchain_groq 
