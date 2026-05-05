@@ -69,15 +69,4 @@ if st.session_state.processed:
                     st.write(out)
             except Exception as e:
                 st.write(f"Error {e}")
-        else:
-            st.write("noooooooooooooooooo")
-else:
-    st.write("NUN")
-
-
-
-
-
-
-
 
