@@ -18,7 +18,7 @@ file = st.file_uploader("Uplode file here",type=['pdf'])
 if st.button("start coversation"):
     if file is not None:
         try:
-            with tempfile.NamedTemporaryFile(delete=False,suffix='.pdf',mode == 'wb') as tmp:
+            with tempfile.NamedTemporaryFile(delete=False,suffix='.pdf',mode = 'wb') as tmp:
                 temp_path = tmp.name
             loader = PDFPlumberLoader(temp_path)
             document = loader.load()
