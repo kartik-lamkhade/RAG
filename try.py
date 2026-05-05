@@ -50,7 +50,7 @@ if st.button("start coversation"):
                 out = chain.invoke({"context":a,"question":Query})
                 st.write(out)
             else:
-                st.write("Enter query first")
+                st.write("noooooooooooooooooo")
 
         except Exception as e:
             st.write(f"Error {e}")
