@@ -35,7 +35,7 @@ if st.button("start coversation"):
                 embedding=emb_model
             )
         
-            Query = st.text_input("Enter query here
+            Query = st.text_input("Enter query here")
             if Query:
                 if st.button("predict"):
                     output = vectore_store.similarity_search(Query,k=5)
