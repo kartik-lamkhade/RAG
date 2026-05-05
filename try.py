@@ -17,7 +17,7 @@ st.title("Document answer")
 parser = StrOutputParser()
 model = ChatGroq(
     groq_api_key=token1,
-    model_name="llama3-8b-8192"
+    model_name="llama-3.1-8b-instant"
 )
 emb_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 file = st.file_uploader("Uplode file here",type='pdf')
