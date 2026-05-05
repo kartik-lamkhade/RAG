@@ -52,6 +52,8 @@ if st.button("start coversation"):
                             chain = template | model | parser
                             out = chain.invoke({"context":a,"question":Query})
                             st.write(out)
+                    except Exception as e:
+                        st.write(f"Error {e}")
                 else:
                     st.write("noooooooooooooooooo")
             except Exception as e:
