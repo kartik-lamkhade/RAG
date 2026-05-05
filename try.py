@@ -39,7 +39,7 @@ if st.button("start coversation"):
             try: 
                 if st.button("predict") and Query:
                     try:
-                        with st.spinner("Generating answer")
+                        with st.spinner("Generating answer"):
                             output = vectore_store.similarity_search(Query,k=5)
                             def add(doc):
                                 a = ""
